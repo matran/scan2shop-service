@@ -1,0 +1,18 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Scan2Shop</title>
+      {% else %}
+      <title>Welcome to Scan2Shop</title>
+      {% endif %}
+    </head>
+    <body>
+        <hr>
+        {% block content %}{% endblock %}
+        <div class="flashes">
+            {% for message in get_flashed_messages() %}
+              {{ message }}
+            {% endfor %}
+          </div>
+    </body>
+</html>
