@@ -6,7 +6,7 @@ product_schema = ProductsSchema(many=True)
 
 class SearchResource(Resource):
     def get(self,name):
-        product=Products.query.filter(Products.name.like('%'+name+'%'))
+        product=Products.query.filter(Products.name.ilike('%'+name+'%'))
         product=product.order_by(Products.name).all()
         if product:
             product = product_schema.dump(product)
