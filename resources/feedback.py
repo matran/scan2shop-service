@@ -15,4 +15,4 @@ class FeedBackResource(Resource):
         db.session.add(feedback)
         db.session.commit()
         return { "status": 'success' }, 200
-     
+         

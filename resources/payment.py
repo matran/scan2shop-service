@@ -30,8 +30,8 @@ class PaymentResource(Resource):
         passcode="063792888642c054b3826dbf5c89dcab7e58cff74c18a8c6ee18d0939c049261"
         amount=json_data['amount']
         phone_number=json_data['phonenumber']
-        #callback_url=url=request.host_url+'api/callback'
-        callback_url="http://9ddf0863.ngrok.io/api/callback"
+        callback_url=url=request.host_url+'api/callback'
+        #callback_url="http://9ddf0863.ngrok.io/api/callback"
         reference_code=json_data['phonenumber']
         description="RANDOM DESCRIPTION"
         rcpts = ReceiptsTemp.query.filter_by(phoneno=phone).first()

@@ -16,11 +16,14 @@ from forms import ResetPasswordForm
 from flask import render_template,make_response
 from Model import db, Users,UserSchema,PasswordChange
 from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.utils import secure_filename
+import os
 user_schema = UserSchema()
 users_schema=UserSchema(many=True)
 app = Flask(__name__)
 app.config.from_object('config')
 mail = Mail()
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 class AuthUsersResource(Resource):
     def post(self):
         json_data = request.get_json(force=True)
@@ -70,6 +73,25 @@ class PackagerResource(Resource):
         users = Users.query.filter_by(privilege="packager").all()
         users = users_schema.dump(users)
         return jsonify(users)
+class ProfilePhotoResource(Resource):
+    def post(self):
+        userid=request.form['userid']
+        photo= request.files['pic']
+        user = Users.query.filter_by(id=userid).first()
+        if not user:
+            return {'status': 'fail','message': 'User does not exist'}, 200
+        if photo and allowed_file(photo.filename):
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], "profile_"+userid+"_"+filename))
+            fileurl=request.host_url+'static/'+"profile_"+userid+"_"+filename
+            user.photo=fileurl
+            db.session.commit()
+            return { "status": 'success','message':'uploaded successfully','url':fileurl}, 200
+        else:
+            resp = jsonify({'status':'fail','message' : 'Wrong file type ensure you are uploading image'})
+            resp.status_code = 200
+            return resp
+
 
 class AuthLoginResource(Resource):
     def post(self):
@@ -89,7 +111,7 @@ class PasswordChangeResource(Resource):
     def get(self,email):
         user = Users.query.filter_by(email=email).first()
         #tomorrow = func.dateadd(func.now(), text('interval 1 day'))
-        created = datetime.utcnow() + timedelta(days=1)
+        created = datetime.now() + timedelta(days=1)
         if user:
             token=secrets.token_urlsafe(20)
             pcr = PasswordChange(token=token,email=email,expires=created)
@@ -121,7 +143,7 @@ class PasswordResetResource(Resource):
             
         return make_response(render_template('reset_password.html',form=form),200,headers)
 def updatePassword(token,password):
-    currentdate = datetime.utcnow()
+    currentdate = datetime.now()
     passwordchange=db.session.query(PasswordChange).filter(PasswordChange.token==token,PasswordChange.expires>=currentdate).first()
     #passwordchange=PasswordChange.query.filter_by(token=token,expires=>currentdate).first()  
     if passwordchange:
@@ -148,4 +170,6 @@ def send_password_reset_email(user,token):
                                          user=user, url=url),
                html_body=render_template('email/reset_password.html',
                                          user=user, url=url))
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 

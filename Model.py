@@ -14,9 +14,10 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(100))
     lastname = db.Column(db.String(100)) 
-    phone = db.Column(db.String(12))
+    phone = db.Column(db.String(30), unique=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
+    photo=db.Column(db.Text())
     deviceid=db.Column(db.Text())
     privilege=db.Column(db.String(20))
     def __init__(self,firstname,lastname,phone,email,password,privilege):
@@ -59,8 +60,8 @@ class PasswordChange(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.Text())
     email=db.Column(db.String(100))
-    date=db.Column(db.DateTime(timezone=True),server_default=func.now())
-    expires=db.Column(db.DateTime(timezone=True))
+    date=db.Column(db.DateTime(),server_default=func.now())
+    expires=db.Column(db.DateTime())
     def __init__(self,token,email,expires):
         self.token=token
         self.email=email
@@ -167,4 +168,5 @@ class UserSchema(ma.Schema):
     lastname=fields.String(required=True)
     phone=fields.String(required=True)
     email=fields.String(required=True)
+    photo=fields.String(required=True)
    
