@@ -12,13 +12,6 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 product_schema = ProductsSchema()
 products_schema = ProductsSchema(many=True)
 class ProductResource(Resource):
-    def get(self,barcode_id):
-        product = Products.query.filter_by(barcode=str(barcode_id)).first()
-        if product:
-            product = product_schema.dump(product)
-            return {'status': 'success', 'item':   product}, 200
-        else:
-            return {'status':'fail','message':'product not found'},200
     def post(self):
         #headers = {'Content-Type': 'multipart/form-data'}
         barcode=request.form['barcode']
@@ -126,5 +119,13 @@ class ProductResourceOption(Resource):
             return resp
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+class FindProductResource(Resource):
+    def get(self,barcode_id):
+        product = Products.query.filter_by(barcode=str(barcode_id)).first()
+        if product:
+            product = product_schema.dump(product)
+            return {'status': 'success', 'item':   product}, 200
+        else:
+            return {'status':'fail','message':'product not found'},200
 
       

@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
 from resources.auth import AuthUsersResource,AuthLoginResource,PasswordChangeResource,PasswordResetResource,PackagerResource, ProfilePhotoResource
-from resources.products import ProductResource,ProductResourceOption
+from resources.products import ProductResource,ProductResourceOption, FindProductResource
 from resources.search import SearchResource
 from resources.fcm import FcmResource
 from resources.receipts import ReceiptsResource,HistoryResource,InvoiceResource,ReceiptResource,RecentReceiptResource
@@ -21,7 +21,8 @@ api.add_resource(RecentReceiptResource,'/resent/<string:phoneno>')
 api.add_resource(AuthUsersResource,'/users','/users/<string:id>')
 api.add_resource(PackagerResource,'/packager')
 api.add_resource(AuthLoginResource,'/login')
-api.add_resource(ProductResource, '/products/<string:barcode_id>','/products','/product/<int:id>/<string:url>')
+api.add_resource(FindProductResource,'/products/<string:barcode_id>')
+api.add_resource(ProductResource, '/products','/product/<int:id>/<string:url>')
 api.add_resource(SearchResource,'/search/<string:name>')
 api.add_resource(ProductResourceOption,'/productsoption')
 api.add_resource(FcmResource,'/fcm')
