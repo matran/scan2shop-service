@@ -13,20 +13,12 @@ product_schema = ProductsSchema()
 products_schema = ProductsSchema(many=True)
 class ProductResource(Resource):
     def get(self,barcode_id):
-        auth_header = request.headers.get('Authorization')
-        access_token = auth_header.split(" ")[1]
-        if access_token:
-            user_id = Users.decode_token(access_token)
-          
-            if not isinstance(user_id, str):
-                product = Products.query.filter_by(barcode=barcode_id).first()
-                if product:
-                    product = product_schema.dump(product)
-                    return {'status': 'success', 'item':   product}, 200
-                else:
-                    return {'status':'fail','message':'product not found'},200
-            else:
-                return {'status':'fail','message':user_id},200
+        product = Products.query.filter_by(barcode=str(barcode_id)).first()
+        if product:
+            product = product_schema.dump(product)
+            return {'status': 'success', 'item':   product}, 200
+        else:
+            return {'status':'fail','message':'product not found'},200
     def post(self):
         #headers = {'Content-Type': 'multipart/form-data'}
         barcode=request.form['barcode']
