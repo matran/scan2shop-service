@@ -12,7 +12,7 @@ Click==7.0
 colorama==0.4.3
 colorclass==2.2.0
 constantly==15.1.0
-cryptography==2.8
+cryptography==3.2
 docopt==0.6.2
 elasticsearch==7.5.1
 Flask==1.1.1
